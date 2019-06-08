@@ -18,6 +18,8 @@ private $password = '';
 
 private $dbh;
 
+private $error;
+
 
 function __construct($dbname="YOUR_DB_NAME",$username="USERNAME", $password="PASSWORD") {
         try {
@@ -27,10 +29,16 @@ function __construct($dbname="YOUR_DB_NAME",$username="USERNAME", $password="PAS
                 }
     catch(PDOException $e)
             {
-            echo $e->getMessage();
-            exit();
+            $this->error = $e->getMessage();
+            return false;
             }
     }
+
+public function error()
+{
+    return $this->error;
+}
+
 public function cpSelect($tablename,$value1=0,$value2=0) {
      /*** The SQL SELECT statement ***/
    /*
@@ -237,8 +245,8 @@ public function cpJoin() {
 }
 public function autocomplete($tablename,$name,$request_term){
     $sql = "SELECT * "
-	."FROM $tablename "
-	."WHERE $name LIKE '%".$request_term."%' "; 
+  ."FROM $tablename "
+  ."WHERE $name LIKE '%".$request_term."%' "; 
        $sth = $this->dbh->prepare($sql);
         $sth->execute();
         $result = $sth->fetchAll(PDO::FETCH_ASSOC);
